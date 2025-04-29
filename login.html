@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Layout (Flexbox)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">Logo</div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        <aside class="sidebar">Sidebar</aside>
+        <article class="content">Main Content</article>
+    </main>
+    <footer>Footer</footer>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Animated Clock with Stopwatch, Alarm, and Calendar</title>
+<style>
+  body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .clock-container {
+    border: 2px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  #digital-clock {
+    font-size: 2em;
+    margin-bottom: 10px;
+  }
+
+  #analog-clock {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border: 1px solid #333;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+  }
+
+  .hand {
+    position: absolute;
+    background-color: black;
+    border-radius: 50%;
+    transform-origin: 50% 100%;
+  }
+
+  #hour-hand {
+    width: 6px;
+    height: 40px;
+    top: 35px;
+    left: calc(50% - 3px);
+  }
+
+  #minute-hand {
+    width: 4px;
+    height: 60px;
+    top: 15px;
+    left: calc(50% - 2px);
+    background-color: #555;
+  }
+
+  #second-hand {
+    width: 2px;
+    height: 70px;
+    top: 5px;
+    left: calc(50% - 1px);
+    background-color: red;
+  }
+
+  .center-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    border-radius: 50%;
+    top: calc(50% - 5px);
+    left: calc(50% - 5px);
+  }
+
+  .stopwatch-container, .alarm-container, .calendar-container {
+    border: 1px solid #eee;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  #stopwatch-display {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+
+  .stopwatch-controls button {
+    padding: 8px 15px;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+
+  .alarm-input {
+    margin-bottom: 10px;
+  }
+
+  .alarm-input label {
+    margin-right: 10px;
+  }
+
+  #calendar-display {
+    font-size: 1.2em;
+  }
+</style>
+</head>
+<body>
+
+  <div class="clock-container">
+    <div id="digital-clock"></div>
+    <div id="analog-clock">
+      <div id="hour-hand" class="hand"></div>
+      <div id="minute-hand" class="hand"></div>
+      <div id="second-hand" class="hand"></div>
+      <div class="center-dot"></div>
+    </div>
+  </div>
+
+  <div class="stopwatch-container">
+    <h2>Stopwatch</h2>
+    <div id="stopwatch-display">00:00:00</div>
+    <div class="stopwatch-controls">
+      <button id="start-stopwatch">Start</button>
+      <button id="pause-stopwatch" disabled>Pause</button>
+      <button id="reset-stopwatch">Reset</button>
+    </div>
+  </div>
+
+  <div class="alarm-container">
+    <h2>Alarm</h2>
+    <div class="alarm-input">
+      <label for="alarm-time">Set Alarm (HH:MM):</label>
+      <input type="time" id="alarm-time">
+      <button id="set-alarm">Set Alarm</button>
+    </div>
+    <div id="alarm-message"></div>
+  </div>
+
+  <div class="calendar-container">
+    <h2>Calendar</h2>
+    <div id="calendar-display"></div>
+  </div>
+
+  <script>
+    // Digital Clock
+    function updateDigitalClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('digital-clock').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    // Analog Clock
+    function updateAnalogClock() {
+      const now = new Date();
+      const hour = now.getHours();
+      const minute = now.getMinutes();
+      const second = now.getSeconds();
+
+      const hourDeg = (hour % 12) * 30 + minute * 0.5;
+      const minuteDeg = minute * 6;
+      const secondDeg = second * 6;
+
+      document.getElementById('hour-hand').style.transform = `rotate(${hourDeg}deg)`;
+      document.getElementById('minute-hand').style.transform = `rotate(${minuteDeg}deg)`;
+      document.getElementById('second-hand').style.transform = `rotate(${secondDeg}deg)`;
+    }
+
+    // Stopwatch
+    let stopwatchInterval;
+    let stopwatchStartTime;
+    const stopwatchDisplay = document.getElementById('stopwatch-display');
+    const startStopwatchButton = document.getElementById('start-stopwatch');
+    const pauseStopwatchButton = document.getElementById('pause-stopwatch');
+    const resetStopwatchButton = document.getElementById('reset-stopwatch');
+
+    function formatTime(milliseconds) {
+      const totalSeconds = Math.floor(milliseconds / 1000);
+      const seconds = String(totalSeconds % 60).padStart(2, '0');
+      const minutes = String(Math.floor(totalSeconds / 60) % 60).padStart(2, '0');
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+      return `${hours}:${minutes}:${seconds}`;
+    }
+
+    startStopwatchButton.addEventListener('click', () => {
+      stopwatchStartTime = stopwatchStartTime ? stopwatchStartTime : Date.now();
+      stopwatchInterval = setInterval(() => {
+        const elapsedTime = Date.now() - stopwatchStartTime;
+        stopwatchDisplay.textContent = formatTime(elapsedTime);
+      }, 10);
+      startStopwatchButton.disabled = true;
+      pauseStopwatchButton.disabled = false;
+    });
+
+    pauseStopwatchButton.addEventListener('click', () => {
+      clearInterval(stopwatchInterval);
+      startStopwatchButton.disabled = false;
+      pauseStopwatchButton.disabled = true;
+    });
+
+    resetStopwatchButton.addEventListener('click', () => {
+      clearInterval(stopwatchInterval);
+      stopwatchStartTime = null;
+      stopwatchDisplay.textContent = '00:00:00';
+      startStopwatchButton.disabled = false;
+      pauseStopwatchButton.disabled = true;
+    });
+
+    // Alarm
+    const alarmTimeInput = document.getElementById('alarm-time');
+    const setAlarmButton = document.getElementById('set-alarm');
+    const alarmMessage = document.getElementById('alarm-message');
+    let alarmInterval;
+    let alarmSound = new Audio('https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3'); // You can replace with your alarm sound
+
+    function checkAlarm() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const currentTime = `${hours}:${minutes}`;
+      const alarmTime = alarmTimeInput.value;
+
+      if (currentTime === alarmTime) {
+        alarmSound.play();
+        alarmMessage.textContent = 'Alarm ringing!';
+        // Optionally stop the interval after the alarm goes off
+        // clearInterval(alarmInterval);
+      } else if (alarmMessage.textContent === 'Alarm ringing!' && (parseInt(hours) > parseInt(alarmTime.split(':')[0]) || (parseInt(hours) === parseInt(alarmTime.split(':')[0]) && parseInt(minutes) > parseInt(alarmTime.split(':')[1])))) {
+        alarmMessage.textContent = ''; // Clear the message if the time has passed
+      }
+    }
+
+    setAlarmButton.addEventListener('click', () => {
+      clearInterval(alarmInterval); // Clear any existing alarm interval
+      if (alarmTimeInput.value) {
+        alarmMessage.textContent = `Alarm set for ${alarmTimeInput.value}`;
+        alarmInterval = setInterval(checkAlarm, 1000);
+      } else {
+        alarmMessage.textContent = 'Please set an alarm time.';
+      }
+    });
+
+    // Calendar
+    function updateCalendar() {
+      const now = new Date();
+      const dayOfWeek = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(now);
+      const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(now);
+      const dayOfMonth = now.getDate();
+      const year = now.getFullYear();
+      document.getElementById('calendar-display').textContent = `${dayOfWeek}, ${month} ${dayOfMonth}, ${year}`;
+    }
+
+    // Update clocks and calendar every second
+    setInterval(updateDigitalClock, 1000);
+    setInterval(updateAnalogClock, 1000);
+    updateCalendar(); // Initial call to display calendar
+
+  </script>
+
+</body>
+</html>
